@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<component name="StreamURL" extends="Task">
+    <interface>
+        <field id="streamer" type="string" />
+        <field id="result" type="uri" />
+    </interface>
+    
+    <script type="text/brighterscript" uri="pkg:/components/StreamURL.bs" />
+</component>

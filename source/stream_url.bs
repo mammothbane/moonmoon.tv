@@ -1,0 +1,33 @@
+import "pkg:/source/http.bs"
+import "pkg:/source/util.bs"
+
+function getStreamLink(streamer as String) as dynamic
+    tokenInfo = getTokenInfo(streamer)
+    if tokenInfo = invalid or tokenInfo.token = invalid
+        print `couldn't retrieve token: ${tokenInfo}`
+        return invalid
+    end if
+
+    resp = getStreamURLs(streamer, tokenInfo)
+
+    stream_urls = filter(resp, function(url)
+        return url.Left(4) = "http"
+    end function)
+
+    return stream_urls[0] ' source-quality url, by convention
+end function
+
+function getTokenInfo(streamer as String) as dynamic
+    return getJSON(`http://api.twitch.tv/api/channels/${streamer}/access_token?client_id=w9msa6phhl3u8s2jyjcmshrfjczj2y`)
+end function
+
+function getStreamURLs(streamer as String, tokenInfo) as dynamic
+    req = mkTwitchRequest()
+    url = `http://usher.ttvnw.net/api/channel/hls/${streamer}.m3u8?allow_source=true&allow_spectre=true&type=any&token=${tokenInfo.token.EncodeUri()}&sig=${tokenInfo.sig}`
+    req.SetUrl(url)
+    resp = req.GetToString()
+
+    urls = resp.Split(chr(10)) ' this piece of shit pl interprets \n and \r the same
+
+    return urls
+end function

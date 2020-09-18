@@ -1,0 +1,18 @@
+import "pkg:/source/stream_url.bs"
+
+sub init()
+    m.top.functionName = "func"
+end sub
+
+sub func()
+    print `running for ${m.top.streamer}`
+
+    result = getStreamLink(m.top.streamer)
+    if result <> invalid
+        print `got result stream link ${result}`
+
+        m.top.result = getStreamLink(m.top.streamer)
+    else
+        print "got no valid stream link"
+    end if
+end sub

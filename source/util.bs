@@ -1,0 +1,11 @@
+function filter(coll, f as Function) as dynamic
+    result = []
+
+    for each k in coll
+        if f(k) then
+            result.Push(k)
+        end if
+    end for
+
+    return result
+end function

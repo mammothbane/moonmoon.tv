@@ -1,0 +1,25 @@
+sub init()
+    node = CreateObject("rosgnode", "StreamURL")
+    m.meme = node
+
+    node.observeField("result", "updatestream")
+    node.streamer = "moonmoon"
+    node.control = "run"
+
+    return
+end sub
+
+sub updatestream(message as object) 
+    result = message.GetData()
+
+    stream = createObject("roSGNode", "ContentNode")
+    stream.streamFormat = "hls"
+    stream["url"] = result
+
+    videoPlayer = m.top.findNode("videoPlayer")
+    videoPlayer.content = stream
+
+    videoPlayer.visible = true
+    videoPlayer.setFocus(true)
+    videoPlayer.control = "play"
+end sub
