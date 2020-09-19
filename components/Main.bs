@@ -8,3 +8,21 @@ sub init()
 
     update_streamer_list()
 end sub
+
+function onKeyEvent(key, press) as boolean
+    if not press
+        return false
+    end if
+
+    video_player = m.top.FindNode("videoPlayer")
+    if key = "back" and video_player.IsInFocusChain()
+        video_player.control = "stop"
+        video_player.visible = false
+        
+        list_picker = m.top.FindNode("picker")
+        list_picker.SetFocus(true)
+        return true
+    end if
+
+    return false
+end function

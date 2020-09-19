@@ -1,4 +1,8 @@
-function banic()
+function banic() as void
+    if currently_watching()
+        return
+    end if
+
     banicNode = CreateObject("roSGNode", "Banic")
 
     m.top.AppendChild(banicNode)
@@ -13,6 +17,11 @@ function banic()
     m.banicTimer = timer
 
     timer.control = "start"
+end function
+
+function currently_watching()
+    video_player = m.top.FindNode("videoPlayer")
+    return video_player.IsInFocusChain()
 end function
 
 function remove_banic()
