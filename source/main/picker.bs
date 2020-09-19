@@ -1,0 +1,40 @@
+function init_picker() as void
+    list_picker = m.top.FindNode("picker")
+    list_picker.SetFocus(true)
+    list_picker.ObserveField("itemSelected", "on_select")
+end function
+
+function on_select(message as object) as void
+    list_picker = m.top.FindNode("picker")
+
+    selected = list_picker.content.GetChild(list_picker.itemSelected)
+    pick_stream(selected.title)
+end function
+
+function pick_stream(streamer as object) as void
+    node = CreateObject("roSGNode", "StreamURL")
+
+    node.ObserveField("result", "set_stream")
+    node.streamer = streamer
+    node.control = "run"
+end function
+
+function set_stream(message as object) as void
+    result = message.GetData()
+
+    if result = invalid
+        print "got invalid stream"
+        return
+    end if
+
+    stream = CreateObject("roSGNode", "ContentNode")
+    stream.streamFormat = "hls"
+    stream["url"] = result
+
+    video_player = m.top.FindNode("videoPlayer")
+    video_player.content = stream
+
+    video_player.visible = true
+    video_player.SetFocus(true)
+    video_player.control = "play"
+end function

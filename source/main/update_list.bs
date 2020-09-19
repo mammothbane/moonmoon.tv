@@ -1,0 +1,34 @@
+function update_streamer_list() as void
+    node = CreateObject("roSGNode", "RetrieveStreamerList")
+    node.ObserveField("result", "handle_update")
+    node.control = "run"
+end function
+
+function handle_update(message as object) as void
+    streamers = message.GetData()
+
+    if streamers = invalid or streamers.count() = 0
+        print "streamer list update failed"
+        return
+    end if
+
+    update_labels(streamers)
+end function
+
+function update_labels(streamers as object) as void
+    content_list = m.top.FindNode("pickerContent")
+
+    ' todo: freeze/unfreeze
+    content_list.RemoveChildrenIndex(content_list.GetChildCount(), 0)
+
+    for each streamer in streamers
+        entry = mk_list_entry(streamer)
+        content_list.AppendChild(entry)
+    end for
+end function
+
+function mk_list_entry(text as string) as object
+    ret = CreateObject("roSGNode", "ContentNode")
+    ret.title = text
+    return ret
+end function

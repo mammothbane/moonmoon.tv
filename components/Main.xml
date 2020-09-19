@@ -20,11 +20,5 @@
             width="0.0"
             height="0.0"
         />
-
-        <Timer
-            id="reloader"
-            repeat="true"
-            duration="5"
-        />
     </children>
 </component>

@@ -1,14 +1,14 @@
 import "pkg:/source/http.bs"
 import "pkg:/source/util.bs"
 
-function getStreamLink(streamer as String) as dynamic
-    tokenInfo = getTokenInfo(streamer)
-    if tokenInfo = invalid or tokenInfo.token = invalid
-        print `couldn't retrieve token: ${tokenInfo}`
+function get_stream_link(streamer as String) as dynamic
+    token_info = get_token_info(streamer)
+    if token_info = invalid or token_info.token = invalid
+        print `couldn't retrieve token: ${token_info}`
         return invalid
     end if
 
-    resp = getStreamURLs(streamer, tokenInfo)
+    resp = get_stream_urls(streamer, token_info)
 
     stream_urls = filter(resp, function(url)
         return url.Left(4) = "http"
@@ -17,14 +17,17 @@ function getStreamLink(streamer as String) as dynamic
     return stream_urls[0] ' source-quality url, by convention
 end function
 
-function getTokenInfo(streamer as String) as dynamic
-    return getJSON(`http://api.twitch.tv/api/channels/${streamer}/access_token?client_id=w9msa6phhl3u8s2jyjcmshrfjczj2y`)
+function get_token_info(streamer as String) as dynamic
+    return get_json(`http://api.twitch.tv/api/channels/${streamer}/access_token?client_id=w9msa6phhl3u8s2jyjcmshrfjczj2y`, twitch_headers())
 end function
 
-function getStreamURLs(streamer as String, tokenInfo) as dynamic
-    req = mkTwitchRequest()
-    url = `http://usher.ttvnw.net/api/channel/hls/${streamer}.m3u8?allow_source=true&allow_spectre=true&type=any&token=${tokenInfo.token.EncodeUri()}&sig=${tokenInfo.sig}`
+function get_stream_urls(streamer as String, token_info) as dynamic
+    req = mk_request()
+    apply_headers(req, twitch_headers())
+
+    url = `http://usher.ttvnw.net/api/channel/hls/${streamer}.m3u8?allow_source=true&type=any&token=${token_info.token.EncodeUri()}&sig=${token_info.sig}`
     req.SetUrl(url)
+
     resp = req.GetToString()
 
     urls = resp.Split(chr(10)) ' this piece of shit pl interprets \n and \r the same

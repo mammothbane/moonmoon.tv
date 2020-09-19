@@ -1,84 +1,10 @@
+import "pkg:/source/main/picker.bs"
+import "pkg:/source/main/timer.bs"
+import "pkg:/source/main/update_list.bs"
+
 sub init()
-    m.streamerList = ["moonmoon"]
+    init_picker()
+    init_timer()
 
-    updateStreamerList()
-
-    timer = m.top.findNode("reloader")
-    timer.ObserveField("fire", "updateStreamerList")
-    timer.control = "start"
-
-    listPicker = m.top.findNode("picker")
-    listPicker.setFocus(true)
-    listPicker.observeField("itemSelected", "onSelect")
-end sub
-
-function updateStreamerList()
-    node = CreateObject("rosgnode", "RetrieveStreamerList")
-    node.observeField("result", "updatelabels")
-    node.control = "run"
-end function
-
-function onSelect(message)
-    listPicker = m.top.findNode("picker")
-
-    selected = listPicker.content.GetChild(listPicker.itemSelected)
-
-    pick_stream(selected.title)
-end function
-
-function updatelabels(message as object) as dynamic
-    streamers = message.GetData()
-    streamers.Append(m.streamerList)
-    streamers.Sort()
-
-    m.streamerList = []
-
-    for i = 0 to streamers.count()
-        streamer = streamers[i]
-
-        if m.streamerList.Peek() <> streamer and streamer <> invalid
-            m.streamerList.Push(streamer)
-        end if
-    end for
-
-    p = picker()
-    p.RemoveChildrenIndex(picker().getchildcount(), 0)
-
-    for each streamer in m.streamerList
-        node = listnode(streamer)
-        p.AppendChild(node)
-    end for
-end function
-
-function listnode(text as string) as dynamic
-    ret = createobject("rosgnode", "contentnode")
-    ret.title = text
-    return ret
-end function
-
-function picker() as dynamic
-    return m.top.findNode("pickerContent")
-end function
-
-function pick_stream(streamer)
-    node = CreateObject("rosgnode", "StreamURL")
-
-    node.observeField("result", "updatestream")
-    node.streamer = streamer
-    node.control = "run"
-end function
-
-sub updatestream(message as object) 
-    result = message.GetData()
-
-    stream = createObject("roSGNode", "ContentNode")
-    stream.streamFormat = "hls"
-    stream["url"] = result
-
-    videoPlayer = m.top.findNode("videoPlayer")
-    videoPlayer.content = stream
-
-    videoPlayer.visible = true
-    videoPlayer.setFocus(true)
-    videoPlayer.control = "play"
+    update_streamer_list()
 end sub

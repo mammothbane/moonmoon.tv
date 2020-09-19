@@ -5,14 +5,10 @@ sub init()
 end sub
 
 sub func()
-    print `running for ${m.top.streamer}`
+    result = get_stream_link(m.top.streamer)
+    m.top.result = result
 
-    result = getStreamLink(m.top.streamer)
-    if result <> invalid
-        print `got result stream link ${result}`
-
-        m.top.result = getStreamLink(m.top.streamer)
-    else
+    if result = invalid
         print "got no valid stream link"
     end if
 end sub

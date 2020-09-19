@@ -1,0 +1,12 @@
+import "pkg:/source/main/update_list.bs"
+
+function init_timer() as void
+    timer = CreateObject("roSGNode", "Timer")
+    timer.duration = 5
+    timer.repeat = true
+    timer.ObserveField("fire", "update_streamer_list")
+
+    timer.control = "start"
+
+    m.top.AppendChild(timer)
+end function

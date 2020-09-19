@@ -1,4 +1,4 @@
-function mkRequest() as dynamic
+function mk_request() as object
     req = CreateObject("roUrlTransfer")
 
     req.EnableEncodings(true)
@@ -10,32 +10,29 @@ function mkRequest() as dynamic
     return req
 end function
 
-function mkTwitchRequest() as dynamic
-    req = mkRequest()
-
-    applyTwitchHeaders(req)
-
-    return req
-end function
-
 function twitch_web_client_id() as string
     return "kimne78kx3ncx6brgo4mv6wki5h1ko"
 end function
 
-function applyTwitchHeaders(req as dynamic) as void
-    req.AddHeader("Client-ID", twitch_web_client_id())
-    req.AddHeader("Accept", "application/vnd.twitchtv.v5+json")
+function twitch_headers() as object
+    return {
+        "client-id": twitch_web_client_id(),
+        "accept": "applicaiton/vnc.twitchtv.v5+json"
+    }
 end function
 
-function getJSON(url, headers = {}) as dynamic
-    req = mkTwitchRequest()
-
-    req.SetUrl(url.EncodeUri())
-
+function apply_headers(req as object, headers as object) as void
     for each key in headers
         val = headers[key]
         req.AddHeader(key, val)
     end for
+end function
+
+function get_json(url as String, headers = {} as object) as dynamic
+    req = mk_request()
+
+    req.SetUrl(url.EncodeUri())
+    apply_headers(req, headers)
 
     resp = req.GetToString()
 
