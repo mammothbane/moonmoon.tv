@@ -9,7 +9,6 @@
             id="picker"
         >
             <ContentNode id="pickerContent" role="content">
-                <ContentNode title="moonmoon"/>
             </ContentNode>
         </LabelList>
 
