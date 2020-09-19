@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<component name="Banic" extends="Group" >
+    <script type="text/brightscript" >
+        <![CDATA[
+            function init()
+                m.top.FindNode("Anim").control = "start"
+            end function
+        ]]>
+    </script>
+
+    <children>
+        <Label 
+            id="label"
+            text="BANIC" 
+            width="1280"  
+            height="720"
+            color="0xff0000ff"
+            translation="[0,0]" 
+            horizAlign="center" 
+            vertAlign="center"
+        >
+            <Font role="font" uri="pkg:/fonts/roboto.ttf" size="400"/> 
+        </Label>
+
+        <Animation id="Anim" duration="0.1" easeFunction="linear" repeat="true">
+            <FloatFieldInterpolator
+                key= "[0, 0.5, 1]"
+                keyValue="[0, 1, 0]"
+                fieldToInterp="label.opacity" 
+            />
+        </Animation>
+    </children>
+
+</component>

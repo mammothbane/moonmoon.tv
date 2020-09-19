@@ -6,5 +6,11 @@ end sub
 
 sub func()
     result = get_json("https://jsonblob.com/api/jsonBlob/077d994c-fa0a-11ea-a18d-c91261341513", {"accept": "application/json"})
+
+    if result = invalid
+        result = []
+        print
+    end if
+
     m.top.result = result
 end sub

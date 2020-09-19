@@ -1,3 +1,5 @@
+import "pkg:/source/main/banic.bs"
+
 function update_streamer_list() as void
     node = CreateObject("roSGNode", "RetrieveStreamerList")
     node.ObserveField("result", "handle_update")
@@ -9,6 +11,8 @@ function handle_update(message as object) as void
 
     if streamers = invalid or streamers.count() = 0
         print "streamer list update failed"
+        banic()
+
         return
     end if
 

@@ -6,9 +6,11 @@ end sub
 
 sub func()
     result = get_stream_link(m.top.streamer)
-    m.top.result = result
 
     if result = invalid
         print "got no valid stream link"
+        result = "invalid"
     end if
+
+    m.top.result = result
 end sub

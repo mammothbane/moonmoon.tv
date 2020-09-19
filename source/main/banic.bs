@@ -1,0 +1,20 @@
+function banic()
+    banicNode = CreateObject("roSGNode", "Banic")
+
+    m.top.AppendChild(banicNode)
+    m.banicNode = banicNode
+
+    timer = CreateObject("roSGNode", "Timer")
+    timer.duration = 1
+    timer.repeat = false
+
+    timer.ObserveField("fire", "remove_banic")
+
+    m.banicTimer = timer
+
+    timer.control = "start"
+end function
+
+function remove_banic()
+    m.top.RemoveChild(m.banicNode)
+end function

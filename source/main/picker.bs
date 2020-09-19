@@ -1,3 +1,5 @@
+import "pkg:/source/main/banic.bs"
+
 function init_picker() as void
     list_picker = m.top.FindNode("picker")
     list_picker.SetFocus(true)
@@ -22,8 +24,9 @@ end function
 function set_stream(message as object) as void
     result = message.GetData()
 
-    if result = invalid
+    if result = invalid or result = "invalid"
         print "got invalid stream"
+        banic()
         return
     end if
 
