@@ -5,7 +5,8 @@
 
     <children>
         <LabelList
-            translation="[300, 200]"
+            translation="[300, 160]"
+            numRows="8"
             id="picker"
         >
             <ContentNode id="pickerContent" role="content">
