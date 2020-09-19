@@ -4,7 +4,7 @@ import "pkg:/source/util.bs"
 function get_stream_link(streamer as String) as dynamic
     token_info = get_token_info(streamer)
     if token_info = invalid or token_info.token = invalid
-        print `couldn't retrieve token: ${token_info}`
+        print `couldn't retrieve token: ${FormatJson(token_info, 1)}`
         return invalid
     end if
 
@@ -18,7 +18,7 @@ function get_stream_link(streamer as String) as dynamic
 end function
 
 function get_token_info(streamer as String) as dynamic
-    return get_json(`http://api.twitch.tv/api/channels/${streamer}/access_token?client_id=w9msa6phhl3u8s2jyjcmshrfjczj2y`, twitch_headers())
+    return get_json(`http://api.twitch.tv/api/channels/${streamer}/access_token`, twitch_headers())
 end function
 
 function get_stream_urls(streamer as String, token_info) as dynamic
