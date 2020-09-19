@@ -1,13 +1,81 @@
 sub init()
+    m.pickIndex = 0
+    updatePicker()
+
+    node = CreateObject("rosgnode", "RetrieveStreamerList")
+    node.observeField("result", "updatelabels")
+    node.control = "run"
+end sub
+
+function updatelabels(message as object) as dynamic
+    streamers = message.GetData()
+
+    for each streamer in streamers
+        picker().AppendChild(label(streamer))
+    end for
+end function
+
+function label(text as string) as dynamic
+    label_ = createobject("rosgnode", "simplelabel")
+    label_.text = text
+
+    return label_
+end function
+
+function picker() as dynamic
+    return m.top.findNode("streamerPicker")
+end function
+
+function updatePicker()
+    for i = 0 to picker().getchildcount() - 1
+        child = picker().GetChild(i)
+
+        if i = m.pickIndex
+            child.setFocus(true)
+            child.visible = false
+        else 
+            child.visible = true
+        end if
+    end for
+end function
+
+function onKeyEvent(key, press) as void
+    if not press
+        return
+    end if
+
+    if key = "down"
+        m.pickIndex = (m.pickIndex + 1) mod picker().GetChildCount()
+        updatePicker()
+        return
+    end if
+
+    if key = "up"
+        count_ = picker().getchildcount()
+        m.pickIndex = (count_ + m.pickIndex - 1) mod count_
+        updatePicker()
+        return
+    end if
+
+    if key <> "OK"
+        return
+    end if
+
+    for each child in picker().getChildren(-1, 0)
+        if child.hasFocus()
+            pick_stream(child.text)
+            return
+        end if
+    end for
+end function
+
+function pick_stream(streamer)
     node = CreateObject("rosgnode", "StreamURL")
-    m.meme = node
 
     node.observeField("result", "updatestream")
-    node.streamer = "moonmoon"
+    node.streamer = streamer
     node.control = "run"
-
-    return
-end sub
+end function
 
 sub updatestream(message as object) 
     result = message.GetData()

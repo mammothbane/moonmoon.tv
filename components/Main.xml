@@ -4,6 +4,15 @@
     <script type="text/brighterscript" uri="pkg:/components/Main.bs" />
 
     <children>
+        <LayoutGroup
+            id="streamerPicker"
+            layoutDirection="vert"
+        >
+            <SimpleLabel
+                text="moonmoon"
+            />
+        </LayoutGroup>
+
         <Video 
             id="videoPlayer"
             visible="false"
