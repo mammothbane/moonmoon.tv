@@ -35,7 +35,3 @@ function handle_liveness_update(message as object) as void
         end if
     end for
 end function
-
-function rowIsLive(row)
-    return row.HDListItemIconURL <> invalid and row.HDListItemIconURL <> ""
-end function
