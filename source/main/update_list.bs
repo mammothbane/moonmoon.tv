@@ -1,4 +1,5 @@
 import "pkg:/source/main/banic.bs"
+import "pkg:/source/main/liveness.bs"
 
 function update_streamer_list() as void
     node = CreateObject("roSGNode", "RetrieveStreamerList")
@@ -16,19 +17,48 @@ function handle_update(message as object) as void
         return
     end if
 
+    do_update_liveness(streamers)
+
     update_labels(streamers)
 end function
 
 function update_labels(streamers as object) as void
     content_list = m.top.FindNode("pickerContent")
 
-    content_list.QueueFields(true)
-
-    content_list.RemoveChildrenIndex(content_list.GetChildCount(), 0)
+    streamer_set = {}
+    row_set = {}
 
     for each streamer in streamers
-        entry = mk_list_entry(streamer)
-        content_list.AppendChild(entry)
+        streamer_set[LCase(streamer)] = true
+    end for
+
+    rows = content_list.GetChildren(-1, 0)
+    for i = 0 to rows.Count() - 1
+        row = rows[i]
+        row_set[LCase(row.title)] = row
+    end for
+
+    to_add = []
+    to_remove = []
+
+    for each streamer in streamer_set
+        if row_set[streamer] = invalid
+            to_add.Unshift(streamer)
+        end if
+    end for
+
+    for each current_streamer in row_set
+        if streamer_set[current_streamer] = invalid
+            to_remove.Push(row_set[current_streamer])
+        end if
+    end for 
+
+    content_list.QueueFields(true)
+
+    content_list.RemoveChildren(to_remove)
+
+    for each streamer in to_add
+        content_list.AppendChild(mk_list_entry(streamer))
     end for
 
     content_list.QueueFields(false)
@@ -37,5 +67,7 @@ end function
 function mk_list_entry(text as string) as object
     ret = CreateObject("roSGNode", "ContentNode")
     ret.title = text
+    ret.HDListItemIconURL           = "pkg:/images/transparent_icon.png"
+    ret.HDListItemIconSelectedURL   = "pkg:/images/transparent_icon.png"
     return ret
 end function

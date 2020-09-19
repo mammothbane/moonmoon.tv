@@ -1,0 +1,41 @@
+function do_update_liveness(streamers as object) as void
+    node = CreateObject("roSGNode", "UpdateLiveness")
+    node.ObserveField("result", "handle_liveness_update")
+    node.streamers = streamers
+
+    node.control = "run"
+end function
+
+function handle_liveness_update(message as object) as void
+    live_streamers = message.GetData()
+    if live_streamers = invalid
+        return
+    end if
+
+    content_list = m.top.FindNode("pickerContent")
+
+    for each row in content_list.GetChildren(-1, 0)
+        live = false
+
+        ' love n^2
+        for each streamer in live_streamers
+            if LCase(row.title) = streamer
+                live = true
+                ' `end` will break out of the *outer* for loop, and i don't even know
+                ' if `goto` is scoped, so we'll just eat the extra cost here
+            end if
+        end for
+
+        if live 
+            row.HDListItemIconURL           = "pkg:/images/live_icon.png"
+            row.HDListItemIconSelectedURL   = "pkg:/images/live_icon.png"
+        else
+            row.HDListItemIconURL           = "pkg:/images/transparent_icon.png"
+            row.HDListItemiconSelectedURL   = "pkg:/images/transparent_icon.png"
+        end if
+    end for
+end function
+
+function rowIsLive(row)
+    return row.HDListItemIconURL <> invalid and row.HDListItemIconURL <> ""
+end function

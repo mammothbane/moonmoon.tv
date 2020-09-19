@@ -1,0 +1,51 @@
+import "pkg:/source/http.bs"
+import "pkg:/source/util.bs"
+
+function update_liveness(streamers as object) as object
+    if streamers = invalid
+        return invalid
+    end if
+
+    channel_ids = translate_to_channel_ids(streamers)
+    if channel_ids = invalid or channel_ids.count() = 0
+        return invalid
+    end if
+
+    resp = get_json(`https://api.twitch.tv/kraken/streams?first=100&channel=${join(channel_ids, ",")}`, twitch_headers())
+
+    if resp = invalid or resp.streams = invalid
+        print `retrieving liveness data: ${FormatJson(resp, 1)}`
+        return invalid
+    end if
+
+    return map(resp.streams, function(stream as object) as string
+        return LCase(stream.channel.name)
+    end function)
+end function
+
+function translate_to_channel_ids(streamers as object) as object
+    resp = get_json(`https://api.twitch.tv/kraken/users?login=${join(streamers, ",")}`, twitch_headers())
+
+    if resp = invalid or resp.users = invalid
+        print `getting channel ids: ${FormatJson(resp, 1)}`
+        return []
+    end if
+
+    return map(resp.users, function(user)
+        return user._id
+    end function)
+end function
+
+function join(strings as object, sep as string) as object
+    ret = ""
+
+    for i = 0 to strings.count() - 2
+        ret += strings[i] + sep
+    end for
+
+    if strings.count() > 0
+        ret += strings[strings.count() - 1]
+    end if
+
+    return ret
+end function

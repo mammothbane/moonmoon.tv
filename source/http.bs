@@ -17,7 +17,7 @@ end function
 function twitch_headers() as object
     return {
         "client-id": twitch_web_client_id(),
-        "accept": "applicaiton/vnc.twitchtv.v5+json"
+        "accept": "application/vnd.twitchtv.v5+json"
     }
 end function
 

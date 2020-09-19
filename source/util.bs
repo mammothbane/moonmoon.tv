@@ -1,10 +1,20 @@
-function filter(coll, f as Function) as dynamic
+function filter(coll as object, f as Function) as object
     result = []
 
     for each k in coll
         if f(k) then
             result.Push(k)
         end if
+    end for
+
+    return result
+end function
+
+function map(coll as object, f as Function) as object
+    result = []
+
+    for each k in coll
+        result.Push(f(k))
     end for
 
     return result

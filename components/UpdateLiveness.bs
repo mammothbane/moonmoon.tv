@@ -1,0 +1,15 @@
+import "pkg:/source/liveness.bs"
+
+sub init()
+    m.top.functionName = "func"
+end sub
+
+sub func()
+    result = update_liveness(m.top.streamers)
+
+    if result = invalid
+        result = {}
+    end if
+
+    m.top.result = result
+end sub
