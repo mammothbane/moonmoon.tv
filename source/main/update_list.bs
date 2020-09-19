@@ -18,13 +18,16 @@ end function
 function update_labels(streamers as object) as void
     content_list = m.top.FindNode("pickerContent")
 
-    ' todo: freeze/unfreeze
+    content_list.QueueFields(true)
+
     content_list.RemoveChildrenIndex(content_list.GetChildCount(), 0)
 
     for each streamer in streamers
         entry = mk_list_entry(streamer)
         content_list.AppendChild(entry)
     end for
+
+    content_list.QueueFields(false)
 end function
 
 function mk_list_entry(text as string) as object
