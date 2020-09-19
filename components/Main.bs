@@ -1,72 +1,63 @@
 sub init()
-    m.pickIndex = 0
-    updatePicker()
+    m.streamerList = ["moonmoon"]
 
+    updateStreamerList()
+
+    timer = m.top.findNode("reloader")
+    timer.ObserveField("fire", "updateStreamerList")
+    timer.control = "start"
+
+    listPicker = m.top.findNode("picker")
+    listPicker.setFocus(true)
+    listPicker.observeField("itemSelected", "onSelect")
+end sub
+
+function updateStreamerList()
     node = CreateObject("rosgnode", "RetrieveStreamerList")
     node.observeField("result", "updatelabels")
     node.control = "run"
-end sub
+end function
+
+function onSelect(message)
+    listPicker = m.top.findNode("picker")
+
+    selected = listPicker.content.GetChild(listPicker.itemSelected)
+
+    pick_stream(selected.title)
+end function
 
 function updatelabels(message as object) as dynamic
     streamers = message.GetData()
+    streamers.Append(m.streamerList)
+    streamers.Sort()
 
-    for each streamer in streamers
-        picker().AppendChild(label(streamer))
+    m.streamerList = []
+
+    for i = 0 to streamers.count()
+        streamer = streamers[i]
+
+        if m.streamerList.Peek() <> streamer and streamer <> invalid
+            m.streamerList.Push(streamer)
+        end if
+    end for
+
+    p = picker()
+    p.RemoveChildrenIndex(picker().getchildcount(), 0)
+
+    for each streamer in m.streamerList
+        node = listnode(streamer)
+        p.AppendChild(node)
     end for
 end function
 
-function label(text as string) as dynamic
-    label_ = createobject("rosgnode", "simplelabel")
-    label_.text = text
-
-    return label_
+function listnode(text as string) as dynamic
+    ret = createobject("rosgnode", "contentnode")
+    ret.title = text
+    return ret
 end function
 
 function picker() as dynamic
-    return m.top.findNode("streamerPicker")
-end function
-
-function updatePicker()
-    for i = 0 to picker().getchildcount() - 1
-        child = picker().GetChild(i)
-
-        if i = m.pickIndex
-            child.setFocus(true)
-            child.visible = false
-        else 
-            child.visible = true
-        end if
-    end for
-end function
-
-function onKeyEvent(key, press) as void
-    if not press
-        return
-    end if
-
-    if key = "down"
-        m.pickIndex = (m.pickIndex + 1) mod picker().GetChildCount()
-        updatePicker()
-        return
-    end if
-
-    if key = "up"
-        count_ = picker().getchildcount()
-        m.pickIndex = (count_ + m.pickIndex - 1) mod count_
-        updatePicker()
-        return
-    end if
-
-    if key <> "OK"
-        return
-    end if
-
-    for each child in picker().getChildren(-1, 0)
-        if child.hasFocus()
-            pick_stream(child.text)
-            return
-        end if
-    end for
+    return m.top.findNode("pickerContent")
 end function
 
 function pick_stream(streamer)
